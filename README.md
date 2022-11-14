@@ -69,6 +69,12 @@ try Item.list(from: viewContext)
 try Item.filter(by: predicate, limit: 3, from: viewContext)
 ```
 
+- Find managed object.
+
+```swift
+try Item.find(by: predicate, from: viewContext)
+```
+
 - Deleting an managed object.
 
 ```swift

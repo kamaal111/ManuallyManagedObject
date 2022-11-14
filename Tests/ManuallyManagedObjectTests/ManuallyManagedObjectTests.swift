@@ -50,9 +50,47 @@ final class ManuallyManagedObjectTests: XCTestCase {
 
         let itemsToSearchFor = [item1, item3]
         let predicate = NSPredicate(format: "id IN %@", itemsToSearchFor.map({ NSString(string: $0.id.uuidString) }))
-        let items = try Item.filter(by: predicate, limit: 3, from: viewContext)
+        let limit = 3
+        let items = try Item.filter(by: predicate, limit: limit, from: viewContext)
 
         XCTAssertEqual(items.count, itemsToSearchFor.count)
+        XCTAssertNotEqual(items.count, limit)
         XCTAssert(items.allSatisfy({ itemsToSearchFor.contains($0) }))
+    }
+
+    func testFoundItem() throws {
+        let item1 = Item(context: viewContext)
+        item1.timestamp = Date()
+        item1.id = UUID()
+        let item2 = Item(context: viewContext)
+        item2.timestamp = Date()
+        item2.id = UUID()
+        let item3 = Item(context: viewContext)
+        item3.timestamp = Date()
+        item3.id = UUID()
+        try viewContext.save()
+
+        let predicate = NSPredicate(format: "id = %@", NSString(string: item2.id.uuidString))
+        let foundItem = try Item.find(by: predicate, from: viewContext)
+
+        XCTAssertEqual(foundItem, item2)
+    }
+
+    func testItemNotFound() throws {
+        let item1 = Item(context: viewContext)
+        item1.timestamp = Date()
+        item1.id = UUID()
+        let item2 = Item(context: viewContext)
+        item2.timestamp = Date()
+        item2.id = UUID()
+        let item3 = Item(context: viewContext)
+        item3.timestamp = Date()
+        item3.id = UUID()
+        try viewContext.save()
+
+        let predicate = NSPredicate(format: "id = %@", NSString(string: UUID().uuidString))
+        let foundItem = try Item.find(by: predicate, from: viewContext)
+
+        XCTAssertNil(foundItem)
     }
 }
