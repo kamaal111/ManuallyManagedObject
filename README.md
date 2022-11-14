@@ -63,6 +63,12 @@ class PersistenceController {
 try Item.list(from: viewContext)
 ```
 
+- Filtering managed objects.
+
+```swift
+try Item.filter(by: predicate, limit: 3, from: viewContext)
+```
+
 - Deleting an managed object.
 
 ```swift
