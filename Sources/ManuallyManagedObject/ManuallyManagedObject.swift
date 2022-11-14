@@ -80,16 +80,19 @@ extension ManuallyManagedObject {
         NSFetchRequest<Self>(entityName: entityName)
     }
 
-    /// Deletes the managed object.
-    /// - Parameter save: whether to commit deletion or not.
-    public func delete(save: Bool = true) throws {
-        guard let context = managedObjectContext else { return }
+    /// Lists all items in CoreData store.
+    /// - Parameter context: An object space to manipulate and track changes to managed objects.
+    /// - Returns: All items in CoreData store.
+    public static func list(from context: NSManagedObjectContext) throws -> [Self] {
+        try context.fetch(fetchRequest())
+    }
 
-        context.delete(self)
+    static func clear(in context: NSManagedObjectContext) throws {
+        guard let request = fetchRequest() as? NSFetchRequest<NSFetchRequestResult> else { return }
 
-        if save {
-            try context.save()
-        }
+        let deleteRequest = NSBatchDeleteRequest(fetchRequest: request)
+        try context.execute(deleteRequest)
+        try context.save()
     }
 
     private static var entityName: String {
