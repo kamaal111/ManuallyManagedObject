@@ -23,6 +23,7 @@ struct ContentView: View {
                 ForEach(items, id: \.id) { item in
                     Text(dateFormatter.string(from: item.timestamp))
                 }
+                .onDelete(perform: deleteItem)
             }
             .navigationTitle("MMO")
             #if os(iOS)
@@ -38,6 +39,16 @@ struct ContentView: View {
         Button(action: addItem) {
             Image(systemName: "plus")
                 .bold()
+        }
+    }
+
+    private func deleteItem(_ indices: IndexSet) {
+        for index in indices {
+            do {
+                try items[index].delete()
+            } catch {
+                print("error", error)
+            }
         }
     }
 
