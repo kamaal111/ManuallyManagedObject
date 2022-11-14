@@ -49,6 +49,18 @@ public protocol ManuallyManagedObject: NSManagedObject {
 }
 
 extension ManuallyManagedObject {
+    /// Deletes the managed object.
+    /// - Parameter save: whether to commit deletion or not.
+    public func delete(save: Bool = true) throws {
+        guard let context = managedObjectContext else { return }
+
+        context.delete(self)
+
+        if save {
+            try context.save()
+        }
+    }
+
     /// A description of an entity in Core Data.
     public static var entity: NSEntityDescription {
         // Create the entity
@@ -66,6 +78,18 @@ extension ManuallyManagedObject {
     /// - Returns: A description of search criteria used to retrieve data from a persistent store.
     public static func fetchRequest() -> NSFetchRequest<Self> {
         NSFetchRequest<Self>(entityName: entityName)
+    }
+
+    /// Deletes the managed object.
+    /// - Parameter save: whether to commit deletion or not.
+    public func delete(save: Bool = true) throws {
+        guard let context = managedObjectContext else { return }
+
+        context.delete(self)
+
+        if save {
+            try context.save()
+        }
     }
 
     private static var entityName: String {

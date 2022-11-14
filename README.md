@@ -55,6 +55,14 @@ class PersistenceController {
 }
 ```
 
+### Managed object API's
+
+- Deleting an managed object
+
+```swift
+try item.delete()
+```
+
 ## LICENSE
 
 ```
