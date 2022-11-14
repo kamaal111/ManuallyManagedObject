@@ -14,6 +14,8 @@ This package let's you easily create CoreData entities without the Xcode GUI use
 
 ## Usage
 
+For a quick overview checkout the example app in this repo.
+
 ### CoreData managed entity
 
 ```swift
@@ -26,7 +28,7 @@ public class Item: NSManagedObject, ManuallyManagedObject { // Using ManuallyMan
     @NSManaged public var id: UUID
     @NSManaged public var timestamp: Date
 
-    // Property representation for CoreData to use.
+    // Property representation for CoreData properties to use.
     public static let properties: [ManagedObjectPropertyConfiguration] = [
         .init(name: \Item.id, type: .uuid, isOptional: false),
         .init(name: \Item.timestamp, type: .date, isOptional: false),
