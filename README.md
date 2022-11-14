@@ -57,7 +57,13 @@ class PersistenceController {
 
 ### Managed object API's
 
-- Deleting an managed object
+- Listing managed objects.
+
+```swift
+try Item.list(from: viewContext)
+```
+
+- Deleting an managed object.
 
 ```swift
 try item.delete()
