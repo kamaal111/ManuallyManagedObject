@@ -114,6 +114,15 @@ extension ManuallyManagedObject {
             return try context.fetch(request)
         }
 
+    /// Finds a single item based in the query.
+    /// - Parameters:
+    ///   - predicate: Query to find the item on.
+    ///   - context: An object space to manipulate and track changes to managed objects.
+    /// - Returns: An found item in CoreData store.
+    public static func find(by predicate: NSPredicate, from context: NSManagedObjectContext) throws -> Self? {
+        try filter(by: predicate, limit: 1, from: context).first
+    }
+
     static func clear(in context: NSManagedObjectContext) throws {
         guard let request = fetchRequest() as? NSFetchRequest<NSFetchRequestResult> else { return }
 
