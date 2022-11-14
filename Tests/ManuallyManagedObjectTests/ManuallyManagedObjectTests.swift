@@ -11,10 +11,6 @@ import XCTest
 final class ManuallyManagedObjectTests: XCTestCase {
     let viewContext = PersistenceController.shared.container.viewContext
 
-    override func setUpWithError() throws {
-        try Item.clear(in: viewContext)
-    }
-
     override func tearDownWithError() throws {
         try Item.clear(in: viewContext)
     }
@@ -23,6 +19,7 @@ final class ManuallyManagedObjectTests: XCTestCase {
         let item = Item(context: viewContext)
         item.timestamp = Date()
         item.id = UUID()
+        try viewContext.save()
 
         let items = try Item.list(from: viewContext)
         XCTAssertEqual(items.count, 1)
@@ -32,9 +29,30 @@ final class ManuallyManagedObjectTests: XCTestCase {
         let item = Item(context: viewContext)
         item.timestamp = Date()
         item.id = UUID()
+        try viewContext.save()
 
         try item.delete()
         let items = try Item.list(from: viewContext)
         XCTAssert(items.isEmpty)
+    }
+
+    func testCorrectItemsGetFiltered() throws {
+        let item1 = Item(context: viewContext)
+        item1.timestamp = Date()
+        item1.id = UUID()
+        let item2 = Item(context: viewContext)
+        item2.timestamp = Date()
+        item2.id = UUID()
+        let item3 = Item(context: viewContext)
+        item3.timestamp = Date()
+        item3.id = UUID()
+        try viewContext.save()
+
+        let itemsToSearchFor = [item1, item3]
+        let predicate = NSPredicate(format: "id IN %@", itemsToSearchFor.map({ NSString(string: $0.id.uuidString) }))
+        let items = try Item.filter(by: predicate, limit: 3, from: viewContext)
+
+        XCTAssertEqual(items.count, itemsToSearchFor.count)
+        XCTAssert(items.allSatisfy({ itemsToSearchFor.contains($0) }))
     }
 }

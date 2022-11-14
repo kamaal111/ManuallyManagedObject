@@ -84,8 +84,35 @@ extension ManuallyManagedObject {
     /// - Parameter context: An object space to manipulate and track changes to managed objects.
     /// - Returns: All items in CoreData store.
     public static func list(from context: NSManagedObjectContext) throws -> [Self] {
-        try context.fetch(fetchRequest())
+        try filter(by: NSPredicate(value: true), from: context)
     }
+
+    /// Filters items in CoreData store.
+    /// - Parameters:
+    ///   - predicate: Query to filter the items on.
+    ///   - context: An object space to manipulate and track changes to managed objects.
+    /// - Returns: Filtered items in CoreData store.
+    public static func filter(by predicate: NSPredicate, from context: NSManagedObjectContext) throws -> [Self] {
+        try filter(by: predicate, limit: nil, from: context)
+    }
+
+    /// Filters items in CoreData store.
+    /// - Parameters:
+    ///   - predicate: Query to filter the items on.
+    ///   - limit: The maximum amount of items to return.
+    ///   - context: An object space to manipulate and track changes to managed objects.
+    /// - Returns: Filtered items in CoreData store.
+    public static func filter(
+        by predicate: NSPredicate,
+        limit: Int?,
+        from context: NSManagedObjectContext) throws -> [Self] {
+            let request = fetchRequest()
+            request.predicate = predicate
+            if let limit = limit {
+                request.fetchLimit = limit
+            }
+            return try context.fetch(request)
+        }
 
     static func clear(in context: NSManagedObjectContext) throws {
         guard let request = fetchRequest() as? NSFetchRequest<NSFetchRequestResult> else { return }
