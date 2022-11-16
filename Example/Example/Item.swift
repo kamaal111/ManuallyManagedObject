@@ -9,12 +9,59 @@ import CoreData
 import ManuallyManagedObject
 
 @objc(Item)
-public class Item: NSManagedObject, ManuallyManagedObject {
-    @NSManaged public var id: UUID
-    @NSManaged public var timestamp: Date
+class Item: NSManagedObject, ManuallyManagedObject, Identifiable {
+    @NSManaged var id: UUID
+    @NSManaged var timestamp: Date
+    @NSManaged var children: NSSet?
 
-    public static let properties: [ManagedObjectPropertyConfiguration] = [
+    var childrenArray: [Child] {
+        children?.allObjects as? [Child] ?? []
+    }
+
+    func addChild(_ child: Child, save: Bool) throws {
+        children = NSSet(array: childrenArray + [child])
+
+        if save {
+            try managedObjectContext?.save()
+        }
+    }
+
+    func addChild(_ child: Child) throws {
+        try addChild(child, save: true)
+    }
+
+    static let properties: [ManagedObjectPropertyConfiguration] = [
         .init(name: \Item.id, type: .uuid, isOptional: false),
         .init(name: \Item.timestamp, type: .date, isOptional: false),
+    ]
+
+    static let relationships: [RelationshipConfiguration] = [
+//        .init(
+//            name: "parent",
+//            destinationEntity: Item.self,
+//            inverseRelationshipName: "children",
+//            isOptional: true,
+//            relationshipType: .toMany)
+    ]
+}
+
+@objc(Child)
+class Child: NSManagedObject, ManuallyManagedObject, Identifiable {
+    @NSManaged var id: UUID
+    @NSManaged var timestamp: Date
+    @NSManaged var parent: Item
+
+    static let properties: [ManagedObjectPropertyConfiguration] = [
+        .init(name: \Child.id, type: .uuid, isOptional: false),
+        .init(name: \Child.timestamp, type: .date, isOptional: false),
+    ]
+
+    static let relationships: [RelationshipConfiguration] = [
+//        .init(
+//            name: "children",
+//            destinationEntity: Child.self,
+//            inverseRelationshipName: "parent",
+//            isOptional: false,
+//            relationshipType: .toOne)
     ]
 }

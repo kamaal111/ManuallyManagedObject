@@ -131,7 +131,7 @@ extension ManuallyManagedObject {
         try context.save()
     }
 
-    private static var entityName: String {
+    static var entityName: String {
         String(describing: Self.self)
     }
 }

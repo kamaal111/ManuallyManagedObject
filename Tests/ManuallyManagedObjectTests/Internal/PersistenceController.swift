@@ -35,9 +35,22 @@ struct PersistenceController {
 public class Item: NSManagedObject, ManuallyManagedObject {
     @NSManaged public var id: UUID
     @NSManaged public var timestamp: Date
+//    @NSManaged public var children: NSSet?
 
     public static let properties: [ManagedObjectPropertyConfiguration] = [
         .init(name: \Item.id, type: .uuid, isOptional: false),
         .init(name: \Item.timestamp, type: .date, isOptional: false),
     ]
 }
+
+//@objc(Child)
+//public class Child: NSManagedObject, ManuallyManagedObject {
+//    @NSManaged public var id: UUID
+//    @NSManaged public var timestamp: Date
+//    @NSManaged public var parent: Item
+//
+//    public static let properties: [ManagedObjectPropertyConfiguration] = [
+//        .init(name: \Child.id, type: .uuid, isOptional: false),
+//        .init(name: \Child.timestamp, type: .date, isOptional: false),
+//    ]
+//}

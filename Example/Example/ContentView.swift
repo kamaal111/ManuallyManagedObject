@@ -21,7 +21,9 @@ struct ContentView: View {
                     Text("No items yet")
                 }
                 ForEach(items, id: \.id) { item in
-                    Text(dateFormatter.string(from: item.timestamp))
+                    NavigationLink(destination: { ChildView(parent: item) }) {
+                        Text(dateFormatter.string(from: item.timestamp))
+                    }
                 }
                 .onDelete(perform: deleteItem)
             }
@@ -59,6 +61,50 @@ struct ContentView: View {
 
         do {
             try viewContext.save()
+        } catch {
+            print("error", error)
+            return
+        }
+    }
+}
+
+struct ChildView: View {
+    @Environment(\.managedObjectContext) private var viewContext
+
+    let parent: Item
+
+    var body: some View {
+        List {
+            if parent.childrenArray.isEmpty {
+                Text("No children yet")
+            }
+            ForEach(parent.childrenArray, id: \.id) { item in
+                Text(dateFormatter.string(from: item.timestamp))
+            }
+        }
+        .navigationTitle("Child")
+        #if os(iOS)
+        .toolbar { ToolbarItem(placement: .navigationBarTrailing) { toolbarView } }
+        #else
+        .toolbar { toolbarView }
+        #endif
+    }
+
+    private var toolbarView: some View {
+        Button(action: addChild) {
+            Image(systemName: "plus")
+                .bold()
+        }
+    }
+
+    private func addChild() {
+        let child = Child(context: viewContext)
+        child.timestamp = Date()
+        child.id = UUID()
+        child.parent = parent
+
+        do {
+            try parent.addChild(child)
         } catch {
             print("error", error)
             return
