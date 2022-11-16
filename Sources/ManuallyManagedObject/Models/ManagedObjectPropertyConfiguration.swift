@@ -9,7 +9,7 @@ import CoreData
 import Foundation
 
 /// Property configuration handled by ``ManuallyManagedObject``.
-public struct ManagedObjectPropertyConfiguration {
+public struct ManagedObjectPropertyConfiguration: Hashable {
     /// Property name.
     public let name: String
     /// Property type.
