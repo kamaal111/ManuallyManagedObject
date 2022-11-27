@@ -18,29 +18,22 @@ struct ContentView: View {
         NavigationStack {
             List {
                 if items.isEmpty {
-                    Text("No items yet")
+                    EmptyItemsView(itemName: "items")
                 }
                 ForEach(items, id: \.id) { item in
                     NavigationLink(destination: { ChildView(parent: item) }) {
-                        Text(dateFormatter.string(from: item.timestamp))
+                        TimestampView(time: item.timestamp)
+                            .foregroundColor(.accentColor)
                     }
                 }
                 .onDelete(perform: deleteItem)
             }
             .navigationTitle("MMO")
             #if os(iOS)
-            .toolbar { ToolbarItem(placement: .navigationBarTrailing) { toolbarView } }
+            .toolbar { ToolbarItem(placement: .navigationBarTrailing) { AddButton(action: addItem) } }
             #else
-            .toolbar { toolbarView }
+            .toolbar { AddButton(action: addItem) }
             #endif
-        }
-        .frame(minWidth: 300, minHeight: 300)
-    }
-
-    private var toolbarView: some View {
-        Button(action: addItem) {
-            Image(systemName: "plus")
-                .bold()
         }
     }
 
@@ -76,25 +69,18 @@ struct ChildView: View {
     var body: some View {
         List {
             if parent.childrenArray.isEmpty {
-                Text("No children yet")
+                EmptyItemsView(itemName: "children")
             }
             ForEach(parent.childrenArray, id: \.id) { item in
-                Text(dateFormatter.string(from: item.timestamp))
+                TimestampView(time: item.timestamp)
             }
         }
         .navigationTitle("Child")
         #if os(iOS)
-        .toolbar { ToolbarItem(placement: .navigationBarTrailing) { toolbarView } }
+        .toolbar { ToolbarItem(placement: .navigationBarTrailing) { AddButton(action: addChild) } }
         #else
-        .toolbar { toolbarView }
+        .toolbar { AddButton(action: addChild) }
         #endif
-    }
-
-    private var toolbarView: some View {
-        Button(action: addChild) {
-            Image(systemName: "plus")
-                .bold()
-        }
     }
 
     private func addChild() {
@@ -108,6 +94,33 @@ struct ChildView: View {
         } catch {
             print("error", error)
             return
+        }
+    }
+}
+
+struct EmptyItemsView: View {
+    let itemName: String
+
+    var body: some View {
+        Text("No \(itemName) yet")
+    }
+}
+
+struct TimestampView: View {
+    let time: Date
+
+    var body: some View {
+        Text(dateFormatter.string(from: time))
+    }
+}
+
+struct AddButton: View {
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            Image(systemName: "plus")
+                .bold()
         }
     }
 }

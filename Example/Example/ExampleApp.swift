@@ -15,6 +15,7 @@ struct ExampleApp: App {
         WindowGroup {
             ContentView()
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
+                .frame(minWidth: 300, minHeight: 300)
         }
     }
 }
