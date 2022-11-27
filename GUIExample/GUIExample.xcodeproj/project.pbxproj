@@ -56,11 +56,11 @@
 		2C168EED2933A7AE00C40FDE /* GUIExample */ = {
 			isa = PBXGroup;
 			children = (
+				2C168EF92933A7B000C40FDE /* GUIExample.entitlements */,
+				2C168EF52933A7AE00C40FDE /* ContentView.swift */,
 				2C168EEE2933A7AE00C40FDE /* GUIExampleApp.swift */,
 				2C168EF02933A7AE00C40FDE /* Persistence.swift */,
-				2C168EF52933A7AE00C40FDE /* ContentView.swift */,
 				2C168EF72933A7B000C40FDE /* Assets.xcassets */,
-				2C168EF92933A7B000C40FDE /* GUIExample.entitlements */,
 				2C168EF22933A7AE00C40FDE /* GUIExample.xcdatamodeld */,
 				2C168EFA2933A7B000C40FDE /* Preview Content */,
 			);
