@@ -8,7 +8,7 @@
 import CoreData
 import Foundation
 
-public struct RelationshipConfiguration: Hashable {
+public class RelationshipConfiguration: ManagedObjectField {
     public let name: String
     public let destinationEntityName: String
     public let inverseRelationshipName: String
@@ -29,7 +29,7 @@ public struct RelationshipConfiguration: Hashable {
             self.relationshipType = relationshipType
         }
 
-    public init<Destination: ManuallyManagedObject>(
+    public convenience init<Destination: ManuallyManagedObject>(
         name: String,
         destinationEntity: Destination.Type,
         inverseRelationshipName: String,
@@ -43,17 +43,20 @@ public struct RelationshipConfiguration: Hashable {
                 relationshipType: relationshipType)
         }
 
-    var nsRelationship: NSRelationshipDescription {
-        let relationship = NSRelationshipDescription()
-            .setRelationshipType(with: relationshipType)
-        relationship.name = name
-        relationship.isOptional = isOptional
-        relationship.destinationEntity = destinationEntity
-        return relationship
+    public override var property: NSPropertyDescription? {
+        get {
+            let relationship = NSRelationshipDescription()
+                .setRelationshipType(with: relationshipType)
+            relationship.name = name
+            relationship.isOptional = isOptional
+            relationship.destinationEntity = destinationEntity
+            return relationship
+        }
+        set { }
     }
 
     func setDestinationEntity(_ destinationEntity: NSEntityDescription) -> RelationshipConfiguration {
-        var configuration = RelationshipConfiguration(
+        let configuration = RelationshipConfiguration(
             name: name,
             destinationEntity: destinationEntityName,
             inverseRelationshipName: inverseRelationshipName,
@@ -70,7 +73,7 @@ public enum RelationshipType {
 }
 
 extension NSRelationshipDescription {
-    func setRelationshipType(with type: RelationshipType) -> NSRelationshipDescription {
+    fileprivate func setRelationshipType(with type: RelationshipType) -> NSRelationshipDescription {
         minCount = 0
         switch type {
         case .toMany:

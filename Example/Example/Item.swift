@@ -30,9 +30,9 @@ class Item: NSManagedObject, ManuallyManagedObject, Identifiable {
         try addChild(child, save: true)
     }
 
-    static let properties: [ManagedObjectPropertyConfiguration] = [
-        .init(name: \Item.id, type: .uuid, isOptional: false),
-        .init(name: \Item.timestamp, type: .date, isOptional: false),
+    static let properties: [ManagedObjectField] = [
+        ManagedObjectPropertyConfiguration(name: \Item.id, type: .uuid, isOptional: false),
+        ManagedObjectPropertyConfiguration(name: \Item.timestamp, type: .date, isOptional: false),
     ]
 
     static let relationships: [RelationshipConfiguration] = [
@@ -51,9 +51,9 @@ class Child: NSManagedObject, ManuallyManagedObject, Identifiable {
     @NSManaged var timestamp: Date
     @NSManaged var parent: Item
 
-    static let properties: [ManagedObjectPropertyConfiguration] = [
-        .init(name: \Child.id, type: .uuid, isOptional: false),
-        .init(name: \Child.timestamp, type: .date, isOptional: false),
+    static let properties: [ManagedObjectField] = [
+        ManagedObjectPropertyConfiguration(name: \Child.id, type: .uuid, isOptional: false),
+        ManagedObjectPropertyConfiguration(name: \Child.timestamp, type: .date, isOptional: false),
     ]
 
     static let relationships: [RelationshipConfiguration] = [

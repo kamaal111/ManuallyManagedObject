@@ -9,7 +9,7 @@ import CoreData
 import Foundation
 
 /// Property configuration handled by ``ManuallyManagedObject``.
-public struct ManagedObjectPropertyConfiguration: Hashable {
+public class ManagedObjectPropertyConfiguration: ManagedObjectField {
     /// Property name.
     public let name: String
     /// Property type.
@@ -33,9 +33,12 @@ public struct ManagedObjectPropertyConfiguration: Hashable {
     ///   - name: Property name.
     ///   - type: Property type.
     ///   - isOptional: Wether or not the object is optional.
-    public init<Root: ManuallyManagedObject, Value>(name: KeyPath<Root, Value>, type: PropertyTypes, isOptional: Bool) {
-        self.init(name: NSExpression(forKeyPath:  name).keyPath, type: type, isOptional: isOptional)
-    }
+    public convenience init<Root: ManuallyManagedObject, Value>(
+        name: KeyPath<Root, Value>,
+        type: PropertyTypes,
+        isOptional: Bool) {
+            self.init(name: NSExpression(forKeyPath:  name).keyPath, type: type, isOptional: isOptional)
+        }
 
     /// The managed objects property type represented in a enum.
     public enum PropertyTypes {
@@ -90,11 +93,14 @@ public struct ManagedObjectPropertyConfiguration: Hashable {
         }
     }
 
-    var attribute: NSAttributeDescription {
-        let attribute = NSAttributeDescription()
-        attribute.name = name
-        attribute.attributeType = type.nsAttributeType
-        attribute.isOptional = isOptional
-        return attribute
+    public override var property: NSPropertyDescription? {
+        get {
+            let attribute = NSAttributeDescription()
+            attribute.name = name
+            attribute.attributeType = type.nsAttributeType
+            attribute.isOptional = isOptional
+            return attribute
+        }
+        set { }
     }
 }
