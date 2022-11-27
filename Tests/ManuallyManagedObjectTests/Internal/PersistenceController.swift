@@ -12,10 +12,10 @@ struct PersistenceController {
     let container: NSPersistentContainer
 
     init() {
-        let model = NSManagedObjectModel()
-        model.entities = PersistenceController.entities
-        container = NSPersistentContainer(name: "ManuallyManagedObjectTests", managedObjectModel: model)
-        container.persistentStoreDescriptions.first!.url = URL(fileURLWithPath: "/dev/null")
+        let persistentContainerBuilder = _PersistentContainerBuilder(
+            entities: PersistenceController.entities,
+            preview: true)
+        container = persistentContainerBuilder.make(withName: "ManuallyManagedObjectTests")
         container.loadPersistentStores(completionHandler: { (storeDescription, error) in
             if let error = error as NSError? {
                 fatalError("Unresolved error \(error), \(error.userInfo)")
@@ -37,7 +37,7 @@ public class Item: NSManagedObject, ManuallyManagedObject {
     @NSManaged public var timestamp: Date
 //    @NSManaged public var children: NSSet?
 
-    public static let properties: [ManagedObjectField] = [
+    public static let properties: [ManagedObjectPropertyConfiguration] = [
         ManagedObjectPropertyConfiguration(name: \Item.id, type: .uuid, isOptional: false),
         ManagedObjectPropertyConfiguration(name: \Item.timestamp, type: .date, isOptional: false),
     ]

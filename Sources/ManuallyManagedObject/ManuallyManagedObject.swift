@@ -45,7 +45,7 @@ import CoreData
 ///
 public protocol ManuallyManagedObject: NSManagedObject {
     /// Managed objects properties.
-    static var properties: [ManagedObjectField] { get }
+    static var properties: [ManagedObjectPropertyConfiguration] { get }
 }
 
 extension ManuallyManagedObject {

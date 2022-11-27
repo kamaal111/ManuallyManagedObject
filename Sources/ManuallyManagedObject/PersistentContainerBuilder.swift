@@ -10,16 +10,16 @@ import Foundation
 
 public struct _PersistentContainerBuilder {
     public let entities: [NSEntityDescription]
-    public let relationships: [RelationshipConfiguration]
+    public let relationships: [_RelationshipConfiguration]
     public let preview: Bool
 
-    public init(entities: [NSEntityDescription], relationships: [RelationshipConfiguration], preview: Bool) {
+    public init(entities: [NSEntityDescription], relationships: [_RelationshipConfiguration] = [], preview: Bool) {
         self.entities = entities
         self.relationships = relationships
         self.preview = preview
     }
 
-    public init(entities: [NSEntityDescription], relationships: [RelationshipConfiguration]) {
+    public init(entities: [NSEntityDescription], relationships: [_RelationshipConfiguration] = []) {
         self.init(entities: entities, relationships: relationships, preview: false)
     }
 
@@ -41,16 +41,12 @@ public struct _PersistentContainerBuilder {
                 return result
             }
 
-        let relationshipsWithDestinationEntities: [RelationshipConfiguration] = relationships
+        let relationshipsWithDestinationEntities: [_RelationshipConfiguration] = relationships
             .compactMap { relationship in
                 guard let entity = entitiesByName[relationship.destinationEntityName] else { return nil }
 
                 return relationship.setDestinationEntity(entity)
             }
-
-        let nsRelationshipsMappedByName = Dictionary(grouping: relationshipsWithDestinationEntities.compactMap({
-            $0.property as? NSRelationshipDescription
-        }), by: \.name)
 
         for relationshipsWithDestinationEntity in relationshipsWithDestinationEntities {
             // Find inverse entity
@@ -58,20 +54,18 @@ public struct _PersistentContainerBuilder {
                 .first {
                     $0.name == relationshipsWithDestinationEntity.inverseRelationshipName
                 }
+
             guard let inverseEntityRelationship,
-                  let inverseEntityName = inverseEntityRelationship.destinationEntity?.name,
-                  let inverseNSRelationship = nsRelationshipsMappedByName[inverseEntityRelationship.name]?.first,
-                  let nsRelationship = relationshipsWithDestinationEntity.property as? NSRelationshipDescription
+                  let nsInverseEntityRelationship = inverseEntityRelationship.property as? NSRelationshipDescription,
+                  let completeRelationship = relationshipsWithDestinationEntity.property as? NSRelationshipDescription
             else { continue }
 
             // Set inverse relationship to relationship
-            nsRelationship.inverseRelationship = inverseNSRelationship
-            // Add relationship to inverse property
-            if entitiesByName[inverseEntityName] == nil {
-                assertionFailure("no entity found here")
-                continue
-            }
-            entitiesByName[inverseEntityName]?.properties.append(nsRelationship)
+            completeRelationship.inverseRelationship = nsInverseEntityRelationship
+
+            // Set `completeRelationship` as property to inverse entity
+            entitiesByName[relationshipsWithDestinationEntity.inverseRelationshipEntityName]?.properties
+                .append(completeRelationship)
         }
 
         return Array(entitiesByName.values)

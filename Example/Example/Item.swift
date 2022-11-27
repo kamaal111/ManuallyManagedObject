@@ -30,18 +30,19 @@ class Item: NSManagedObject, ManuallyManagedObject, Identifiable {
         try addChild(child, save: true)
     }
 
-    static let properties: [ManagedObjectField] = [
+    static let properties: [ManagedObjectPropertyConfiguration] = [
         ManagedObjectPropertyConfiguration(name: \Item.id, type: .uuid, isOptional: false),
         ManagedObjectPropertyConfiguration(name: \Item.timestamp, type: .date, isOptional: false),
     ]
 
-    static let relationships: [RelationshipConfiguration] = [
-//        .init(
-//            name: "parent",
-//            destinationEntity: Item.self,
-//            inverseRelationshipName: "children",
-//            isOptional: true,
-//            relationshipType: .toMany)
+    static let relationships: [_RelationshipConfiguration] = [
+        _RelationshipConfiguration(
+            name: "children",
+            destinationEntity: Child.self,
+            inverseRelationshipName: "parent",
+            inverseRelationshipEntity: Item.self,
+            isOptional: true,
+            relationshipType: .toMany)
     ]
 }
 
@@ -51,17 +52,18 @@ class Child: NSManagedObject, ManuallyManagedObject, Identifiable {
     @NSManaged var timestamp: Date
     @NSManaged var parent: Item
 
-    static let properties: [ManagedObjectField] = [
+    static let properties: [ManagedObjectPropertyConfiguration] = [
         ManagedObjectPropertyConfiguration(name: \Child.id, type: .uuid, isOptional: false),
         ManagedObjectPropertyConfiguration(name: \Child.timestamp, type: .date, isOptional: false),
     ]
 
-    static let relationships: [RelationshipConfiguration] = [
-//        .init(
-//            name: "children",
-//            destinationEntity: Child.self,
-//            inverseRelationshipName: "parent",
-//            isOptional: false,
-//            relationshipType: .toOne)
+    static let relationships: [_RelationshipConfiguration] = [
+        _RelationshipConfiguration(
+            name: "parent",
+            destinationEntity: Child.self,
+            inverseRelationshipName: "children",
+            inverseRelationshipEntity: Child.self,
+            isOptional: false,
+            relationshipType: .toOne)
     ]
 }
