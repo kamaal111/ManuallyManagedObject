@@ -8,7 +8,7 @@
 import CoreData
 import Foundation
 
-public struct PersistentContainerBuilder {
+public struct _PersistentContainerBuilder {
     public let entities: [NSEntityDescription]
     public let relationships: [RelationshipConfiguration]
     public let preview: Bool
