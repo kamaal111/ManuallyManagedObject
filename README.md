@@ -29,7 +29,7 @@ public class Item: NSManagedObject, ManuallyManagedObject { // Using ManuallyMan
     @NSManaged public var timestamp: Date
 
     // Property representation for CoreData properties to use.
-    public static let properties: [ManagedObjectField] = [
+    public static let properties: [ManagedObjectPropertyConfiguration] = [
         ManagedObjectPropertyConfiguration(name: \Item.id, type: .uuid, isOptional: false),
         ManagedObjectPropertyConfiguration(name: \Item.timestamp, type: .date, isOptional: false),
     ]
