@@ -64,6 +64,8 @@ struct ContentView: View {
 struct ChildView: View {
     @Environment(\.managedObjectContext) private var viewContext
 
+    @State private var children: [Child] = []
+
     let parent: Item
 
     var body: some View {
@@ -71,7 +73,7 @@ struct ChildView: View {
             if parent.childrenArray.isEmpty {
                 EmptyItemsView(itemName: "children")
             }
-            ForEach(parent.childrenArray, id: \.id) { item in
+            ForEach(children, id: \.id) { item in
                 TimestampView(time: item.timestamp)
             }
         }
@@ -81,6 +83,12 @@ struct ChildView: View {
         #else
         .toolbar { AddButton(action: addChild) }
         #endif
+        .onAppear(perform: {
+            children = parent.childrenArray
+                .sorted(by: {
+                    $0.timestamp.compare($1.timestamp) == .orderedDescending
+                })
+        })
     }
 
     private func addChild() {
@@ -94,6 +102,10 @@ struct ChildView: View {
         } catch {
             print("error", error)
             return
+        }
+
+        withAnimation {
+            children = [child] + children
         }
     }
 }
