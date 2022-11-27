@@ -45,7 +45,7 @@ import CoreData
 ///
 public protocol ManuallyManagedObject: NSManagedObject {
     /// Managed objects properties.
-    static var properties: [ManagedObjectPropertyConfiguration] { get }
+    static var properties: [ManagedObjectField] { get }
 }
 
 extension ManuallyManagedObject {
@@ -69,7 +69,7 @@ extension ManuallyManagedObject {
         entity.managedObjectClassName = entityName
 
         // Create the attributes
-        entity.properties = properties.map(\.attribute)
+        entity.properties = properties.compactMap(\.property)
 
         return entity
     }

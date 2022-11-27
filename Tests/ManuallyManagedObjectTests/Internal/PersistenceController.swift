@@ -37,9 +37,9 @@ public class Item: NSManagedObject, ManuallyManagedObject {
     @NSManaged public var timestamp: Date
 //    @NSManaged public var children: NSSet?
 
-    public static let properties: [ManagedObjectPropertyConfiguration] = [
-        .init(name: \Item.id, type: .uuid, isOptional: false),
-        .init(name: \Item.timestamp, type: .date, isOptional: false),
+    public static let properties: [ManagedObjectField] = [
+        ManagedObjectPropertyConfiguration(name: \Item.id, type: .uuid, isOptional: false),
+        ManagedObjectPropertyConfiguration(name: \Item.timestamp, type: .date, isOptional: false),
     ]
 }
 

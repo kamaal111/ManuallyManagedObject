@@ -48,7 +48,9 @@ public struct PersistentContainerBuilder {
                 return relationship.setDestinationEntity(entity)
             }
 
-        let nsRelationshipsMappedByName = Dictionary(grouping: relationshipsWithDestinationEntities.map(\.nsRelationship), by: \.name)
+        let nsRelationshipsMappedByName = Dictionary(grouping: relationshipsWithDestinationEntities.compactMap({
+            $0.property as? NSRelationshipDescription
+        }), by: \.name)
 
         for relationshipsWithDestinationEntity in relationshipsWithDestinationEntities {
             // Find inverse entity
@@ -58,10 +60,11 @@ public struct PersistentContainerBuilder {
                 }
             guard let inverseEntityRelationship,
                   let inverseEntityName = inverseEntityRelationship.destinationEntity?.name,
-                  let inverseNSRelationship = nsRelationshipsMappedByName[inverseEntityRelationship.name]?.first
+                  let inverseNSRelationship = nsRelationshipsMappedByName[inverseEntityRelationship.name]?.first,
+                  let nsRelationship = relationshipsWithDestinationEntity.property as? NSRelationshipDescription
             else { continue }
+
             // Set inverse relationship to relationship
-            let nsRelationship = relationshipsWithDestinationEntity.nsRelationship
             nsRelationship.inverseRelationship = inverseNSRelationship
             // Add relationship to inverse property
             if entitiesByName[inverseEntityName] == nil {
