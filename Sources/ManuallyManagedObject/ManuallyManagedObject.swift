@@ -18,8 +18,8 @@ import CoreData
 ///     @NSManaged public var timestamp: Date
 ///
 ///     public static let properties: [ManagedObjectPropertyConfiguration] = [
-///         .init(name: \Item.id, type: .uuid, isOptional: false),
-///         .init(name: \Item.timestamp, type: .date, isOptional: false),
+///         ManagedObjectPropertyConfiguration(name: \Item.id, type: .uuid, isOptional: false),
+///         ManagedObjectPropertyConfiguration(name: \Item.timestamp, type: .date, isOptional: false),
 ///     ]
 /// }
 /// ```
@@ -46,6 +46,12 @@ import CoreData
 public protocol ManuallyManagedObject: NSManagedObject {
     /// Managed objects properties.
     static var properties: [ManagedObjectPropertyConfiguration] { get }
+    /// Managed objects relationships.
+    static var _relationships: [_RelationshipConfiguration] { get }
+}
+
+extension ManuallyManagedObject {
+    public static var _relationships: [_RelationshipConfiguration] { [] }
 }
 
 extension ManuallyManagedObject {
