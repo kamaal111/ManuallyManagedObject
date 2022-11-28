@@ -60,7 +60,7 @@ class Child: NSManagedObject, ManuallyManagedObject, Identifiable {
     static let relationships: [_RelationshipConfiguration] = [
         _RelationshipConfiguration(
             name: "parent",
-            destinationEntity: Child.self,
+            destinationEntity: Item.self,
             inverseRelationshipName: "children",
             inverseRelationshipEntity: Child.self,
             isOptional: false,

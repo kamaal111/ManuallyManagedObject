@@ -15,7 +15,7 @@ struct PersistenceController {
     init(inMemory: Bool = false) {
         let persistentContainerBuilder = _PersistentContainerBuilder(
             entities: [Item.entity, Child.entity],
-//            relationships: Item.relationships + Child.relationships,
+            relationships: Item.relationships + Child.relationships,
             preview: inMemory)
         container = persistentContainerBuilder.make(withName: "Example")
         container.loadPersistentStores(completionHandler: { (storeDescription, error) in
