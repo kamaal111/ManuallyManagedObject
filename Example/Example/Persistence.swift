@@ -16,8 +16,9 @@ struct PersistenceController {
         let persistentContainerBuilder = _PersistentContainerBuilder(
             entities: [Item.entity, Child.entity],
             relationships: Item._relationships + Child._relationships,
+            containerName: "Example",
             preview: inMemory)
-        container = persistentContainerBuilder.make(withName: "Example")
+        container = persistentContainerBuilder.make()
         container.loadPersistentStores(completionHandler: { (storeDescription, error) in
             if let error = error as NSError? {
                 fatalError("Unresolved error \(error), \(error.userInfo)")
