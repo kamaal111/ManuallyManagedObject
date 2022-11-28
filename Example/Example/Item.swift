@@ -35,7 +35,7 @@ class Item: NSManagedObject, ManuallyManagedObject, Identifiable {
         ManagedObjectPropertyConfiguration(name: \Item.timestamp, type: .date, isOptional: false),
     ]
 
-    static let relationships: [_RelationshipConfiguration] = [
+    static let _relationships: [_RelationshipConfiguration] = [
         _RelationshipConfiguration(
             name: "children",
             destinationEntity: Child.self,
@@ -57,7 +57,7 @@ class Child: NSManagedObject, ManuallyManagedObject, Identifiable {
         ManagedObjectPropertyConfiguration(name: \Child.timestamp, type: .date, isOptional: false),
     ]
 
-    static let relationships: [_RelationshipConfiguration] = [
+    static let _relationships: [_RelationshipConfiguration] = [
         _RelationshipConfiguration(
             name: "parent",
             destinationEntity: Item.self,
