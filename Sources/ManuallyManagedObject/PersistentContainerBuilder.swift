@@ -41,30 +41,35 @@ public struct _PersistentContainerBuilder {
                 return result
             }
 
-        let relationshipsWithDestinationEntities: [_RelationshipConfiguration] = relationships
+        let relationshipsWithDestinationEntities: [RelationshipContainer] = relationships
             .compactMap { relationship in
                 guard let entity = entitiesByName[relationship.destinationEntityName] else { return nil }
 
-                return relationship.setDestinationEntity(entity)
+                let relationshipWithDestinationEntity = relationship.setDestinationEntity(entity)
+
+                guard let nsRelationship = relationshipWithDestinationEntity.property as? NSRelationshipDescription
+                else { return nil }
+
+                return RelationshipContainer(nsRelationship: nsRelationship,
+                                             configuration: relationshipWithDestinationEntity)
             }
 
         for relationshipsWithDestinationEntity in relationshipsWithDestinationEntities {
             // Find inverse entity
             let inverseEntityRelationship = relationshipsWithDestinationEntities
                 .first {
-                    $0.name == relationshipsWithDestinationEntity.inverseRelationshipName
+                    $0.configuration.name == relationshipsWithDestinationEntity.configuration.inverseRelationshipName
                 }
 
-            guard let inverseEntityRelationship,
-                  let nsInverseEntityRelationship = inverseEntityRelationship.property as? NSRelationshipDescription,
-                  let completeRelationship = relationshipsWithDestinationEntity.property as? NSRelationshipDescription
-            else { continue }
+            guard let inverseEntityRelationship else { continue }
 
+            let nsInverseEntityRelationship = inverseEntityRelationship.nsRelationship
+            let completeRelationship = relationshipsWithDestinationEntity.nsRelationship
             // Set inverse relationship to relationship
             completeRelationship.inverseRelationship = nsInverseEntityRelationship
 
             // Set `completeRelationship` as property to inverse entity
-            entitiesByName[relationshipsWithDestinationEntity.inverseRelationshipEntityName]?.properties
+            entitiesByName[relationshipsWithDestinationEntity.configuration.inverseRelationshipEntityName]?.properties
                 .append(completeRelationship)
         }
 
@@ -76,4 +81,9 @@ public struct _PersistentContainerBuilder {
         model.entities = entitiesWithRelationships
         return model
     }
+}
+
+fileprivate struct RelationshipContainer {
+    let nsRelationship: NSRelationshipDescription
+    let configuration: _RelationshipConfiguration
 }
