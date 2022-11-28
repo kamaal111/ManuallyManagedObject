@@ -11,20 +11,38 @@ import Foundation
 public struct _PersistentContainerBuilder {
     public let entities: [NSEntityDescription]
     public let relationships: [_RelationshipConfiguration]
+    public let containerName: String
+    public let managedObjectModelURL: URL?
     public let preview: Bool
 
-    public init(entities: [NSEntityDescription], relationships: [_RelationshipConfiguration] = [], preview: Bool) {
-        self.entities = entities
-        self.relationships = relationships
-        self.preview = preview
-    }
+    public init(
+        entities: [NSEntityDescription],
+        relationships: [_RelationshipConfiguration] = [],
+        containerName: String,
+        managedObjectModelURL: URL? = nil,
+        preview: Bool) {
+            self.entities = entities
+            self.relationships = relationships
+            self.containerName = containerName
+            self.managedObjectModelURL = managedObjectModelURL
+            self.preview = preview
+        }
 
-    public init(entities: [NSEntityDescription], relationships: [_RelationshipConfiguration] = []) {
-        self.init(entities: entities, relationships: relationships, preview: false)
-    }
+    public init(
+        entities: [NSEntityDescription],
+        containerName: String,
+        managedObjectModelURL: URL? = nil,
+        relationships: [_RelationshipConfiguration] = []) {
+            self.init(
+                entities: entities,
+                relationships: relationships,
+                containerName: containerName,
+                managedObjectModelURL: managedObjectModelURL,
+                preview: false)
+        }
 
-    public func make(withName name: String) -> NSPersistentContainer {
-        let container = NSPersistentContainer(name: name, managedObjectModel: model)
+    public func make() -> NSPersistentContainer {
+        let container = NSPersistentContainer(name: containerName, managedObjectModel: model)
         if preview {
             container.persistentStoreDescriptions.first?.url = URL(fileURLWithPath: "/dev/null")
         }
@@ -77,9 +95,17 @@ public struct _PersistentContainerBuilder {
     }
 
     private var model: NSManagedObjectModel {
-        let model = NSManagedObjectModel()
-        model.entities = entitiesWithRelationships
-        return model
+        var model: NSManagedObjectModel?
+        if let managedObjectModelURL {
+            model = NSManagedObjectModel(contentsOf: managedObjectModelURL)
+        }
+
+        if model == nil {
+            model = NSManagedObjectModel()
+        }
+
+        model!.entities = entitiesWithRelationships
+        return model!
     }
 }
 

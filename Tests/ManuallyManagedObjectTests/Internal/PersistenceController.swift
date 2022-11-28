@@ -14,8 +14,9 @@ struct PersistenceController {
     init() {
         let persistentContainerBuilder = _PersistentContainerBuilder(
             entities: PersistenceController.entities,
+            containerName: "ManuallyManagedObjectTests",
             preview: true)
-        container = persistentContainerBuilder.make(withName: "ManuallyManagedObjectTests")
+        container = persistentContainerBuilder.make()
         container.loadPersistentStores(completionHandler: { (storeDescription, error) in
             if let error = error as NSError? {
                 fatalError("Unresolved error \(error), \(error.userInfo)")
